@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B1120">
+<title>Jepson 的造芯进度 · 一生一芯</title>
+<meta name="description" content="从大本营走到峰顶，每点亮一格，离一颗真芯片近一点。">
+<meta property="og:title" content="Jepson 的造芯进度">
+<meta property="og:description" content="一生一芯 F 到 A，六段路，一格一格点亮。">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#0A101C; --sf:#101A2C; --sf2:#16213A; --bd:#1D2A42; --bd2:#2A3A5C;
+  --tx:#E8EFF9; --mu:#7E8EA6; --mu2:#5A6B85;
+  --ac:#38BDF8; --ac2:#22D3EE; --ok:#34D399; --wn:#FBBF24; --gold:#F5A623;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--tx);
+  font-family:system-ui,-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 18px}
+
+/* ---------- 首页：山体 ---------- */
+.hero{padding:26px 0 6px}
+.hero h1{font-size:19px;font-weight:600;letter-spacing:.4px}
+.hero .sub{font-size:12.5px;color:var(--mu);margin-top:5px;line-height:1.55}
+
+.mt-outer{position:relative;margin-top:16px}
+.mt-scroll{
+  overflow-x:auto; overflow-y:hidden;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  border-radius:14px;
+}
+.mt-scroll::-webkit-scrollbar{display:none}
+.mt-canvas{position:relative;display:inline-block;line-height:0;width:100%}
+.mt-canvas img{width:100%;height:auto;display:block;border-radius:14px}
+.mt-scroll{background:linear-gradient(180deg,#132038,#0B1524);border-radius:14px}
+
+.hot{
+  position:absolute; transform:translate(-50%,-50%);
+  width:42px;height:42px;border-radius:50%;
+  border:none;background:transparent;cursor:pointer;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  z-index:3;
+}
+.hot i{
+  display:block;width:20px;height:20px;border-radius:50%;
+  background:rgba(8,14,24,.5);
+  border:2.5px solid #FFC85C;
+  box-shadow:0 0 0 2px rgba(6,10,18,.55), 0 0 13px rgba(255,190,60,.75);
+  transition:.22s;
+}
+.hot b{
+  position:absolute; top:50%; left:calc(50% + 13px); transform:translateY(-50%);
+  font-size:11px;font-weight:700;letter-spacing:.6px;line-height:1;
+  color:#FFD98A;background:rgba(7,12,22,.8);
+  padding:3px 7px;border-radius:6px;
+  border:1px solid rgba(255,200,90,.32);
+  white-space:nowrap;pointer-events:none;
+}
+.hot.l b{left:auto;right:calc(50% + 13px)}
+.hot:hover i,.hot:focus-visible i{transform:scale(1.5);background:var(--gold);box-shadow:0 0 0 4px rgba(245,166,35,.28),0 0 20px rgba(245,166,35,.8)}
+.hot.done i{background:var(--gold);box-shadow:0 0 0 3px rgba(245,166,35,.3),0 0 16px rgba(245,166,35,.65)}
+.hot.cur i{animation:pulse 2.1s ease-in-out infinite}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 3px rgba(245,166,35,.18),0 0 12px rgba(245,166,35,.4)}
+  50%{box-shadow:0 0 0 7px rgba(245,166,35,.05),0 0 22px rgba(245,166,35,.85)}
+}
+.mt-outer .hint-swipe{
+  position:absolute;right:10px;bottom:8px;font-size:10px;line-height:1.4;color:rgba(255,255,255,.55);
+  background:rgba(6,10,18,.6);padding:3px 8px;border-radius:99px;
+  pointer-events:none;z-index:4;
+}
+@media (min-width:760px){ .mt-outer .hint-swipe{display:none} }
+
+/* 手机：图撑到一定高度，超出部分横向拖动 */
+@media (max-width:759px){
+  .mt-canvas{width:auto}
+  .mt-canvas img{width:auto;height:58vh;max-height:440px;border-radius:14px}
+  .mt-scroll{border-radius:14px}
+}
+
+/* ---------- 进度条 ---------- */
+.bar-wrap{margin-top:18px}
+.bar-meta{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--mu);margin-bottom:7px}
+.bar-meta b{color:var(--tx);font-weight:600;font-size:13px}
+.bar{height:5px;background:var(--sf2);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;width:0;background:linear-gradient(90deg,#0E7490,var(--ac2));border-radius:99px;transition:width .55s cubic-bezier(.4,0,.2,1)}
+
+/* ---------- 通用 ---------- */
+section{padding:26px 0 0}
+h2{font-size:12px;font-weight:600;color:var(--mu);letter-spacing:1.6px;text-transform:uppercase;margin-bottom:12px}
+h2 span{color:var(--tx);font-weight:600;letter-spacing:.3px;text-transform:none;font-size:14px;margin-left:7px}
+
+.today{display:grid;gap:9px}
+.tcard{
+  background:var(--sf);border:1px solid var(--bd);border-radius:13px;
+  padding:14px 16px;cursor:pointer;transition:.16s;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.tcard:hover{border-color:var(--bd2);background:var(--sf2)}
+.tcard .idx{
+  flex:0 0 24px;height:24px;border-radius:7px;background:#0C2A38;color:var(--ac2);
+  display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;
+}
+.tcard .body{flex:1;min-width:0}
+.tcard .st{font-size:10.5px;color:var(--ac2);letter-spacing:.6px;margin-bottom:2px}
+.tcard .tt{font-size:13.5px;font-weight:500;line-height:1.45}
+.tcard .ds{font-size:11.5px;color:var(--mu);margin-top:3px;line-height:1.45}
+
+/* ---------- 阶段页 ---------- */
+#stageView{display:none}
+#stageView.on{display:block}
+#homeView.off{display:none}
+
+.back{
+  display:inline-flex;align-items:center;gap:6px;
+  background:none;border:none;color:var(--mu);font-size:13px;
+  cursor:pointer;padding:16px 0 4px;font-family:inherit;
+}
+.back:hover{color:var(--tx)}
+
+.st-hd{padding:6px 0 20px}
+.st-hd .tag{font-size:11px;color:var(--ac2);letter-spacing:1.4px;margin-bottom:6px}
+.st-hd h1{font-size:23px;font-weight:600;letter-spacing:.3px}
+.st-hd .meta{font-size:12.5px;color:var(--mu);margin-top:7px;line-height:1.6}
+
+/* 海拔条 */
+.alt{position:relative;margin:22px 0 8px;height:44px}
+.alt-track{
+  position:absolute;left:0;right:0;top:20px;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,#1B3A4B,#164E63 35%,#0E7490 70%,#F5A623);
+  opacity:.55;
+}
+.alt-mark{
+  position:absolute;top:20px;width:2px;height:4px;background:var(--bd2);
+}
+.alt-dot{
+  position:absolute;top:22px;width:9px;height:9px;border-radius:50%;
+  transform:translate(-50%,-50%);background:var(--sf2);border:1.5px solid var(--bd2);
+}
+.alt-dot.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(245,166,35,.7)}
+.alt-lbl{
+  position:absolute;top:4px;transform:translateX(-50%);
+  font-size:10px;color:var(--mu2);letter-spacing:.5px;
+}
+.alt-lbl.on{color:var(--gold);font-weight:600}
+.alt-pos{position:absolute;right:0;top:34px;font-size:10px;color:var(--mu2);display:none}
+
+/* 节点列表 */
+.list{display:grid;gap:8px;margin-top:8px}
+.item{
+  background:var(--sf);border:1px solid var(--bd);border-radius:12px;
+  padding:13px 15px;cursor:pointer;transition:.16s;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.item:hover{border-color:var(--bd2);background:var(--sf2)}
+.item.done{opacity:.55}
+.item.done .it-t{text-decoration:line-through;text-decoration-color:var(--mu2)}
+.it-n{
+  flex:0 0 26px;height:26px;border-radius:8px;background:var(--sf2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--mu);
+}
+.item.done .it-n{background:#0F2E24;color:var(--ok)}
+.it-b{flex:1;min-width:0}
+.it-t{font-size:13.5px;font-weight:500;line-height:1.45}
+.it-d{font-size:11.5px;color:var(--mu);margin-top:3px;line-height:1.45}
+.chip{display:inline-block;font-size:10px;padding:1px 7px;border-radius:5px;background:#0C2A38;color:var(--ac2);margin-top:6px;letter-spacing:.3px}
+.chip.warn{background:#2E2410;color:var(--wn)}
+
+/* ---------- 弹层 ---------- */
+#modal{
+  position:fixed;inset:0;background:rgba(4,8,15,.84);backdrop-filter:blur(7px);
+  display:none;align-items:flex-end;justify-content:center;z-index:99;
+  padding:0;
+}
+#modal.on{display:flex}
+@media (min-width:640px){ #modal{align-items:center;padding:24px} }
+.sheet{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:20px 20px 0 0;
+  width:100%;max-width:540px;max-height:88vh;overflow-y:auto;
+  padding:24px 22px calc(24px + env(safe-area-inset-bottom));
+  animation:up .26s cubic-bezier(.2,.8,.3,1);
+}
+@media (min-width:640px){ .sheet{border-radius:18px} }
+@keyframes up{from{transform:translateY(26px);opacity:0}to{transform:none;opacity:1}}
+.grab{width:34px;height:4px;border-radius:99px;background:var(--bd2);margin:-8px auto 14px}
+.sheet-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet-hd h3{font-size:16.5px;font-weight:600;line-height:1.4}
+.close{background:none;border:none;color:var(--mu);font-size:24px;cursor:pointer;padding:0 2px;line-height:1}
+.sheet .stag{font-size:10.5px;color:var(--ac2);letter-spacing:1.1px;margin-top:6px}
+.block{margin-top:18px}
+.block .lb{font-size:10.5px;color:var(--mu);letter-spacing:1.2px;margin-bottom:6px}
+.block .val{font-size:13.5px;line-height:1.65}
+.block .val.out{background:#0C2A38;border-left:2px solid var(--ac2);padding:9px 13px;border-radius:0 8px 8px 0}
+.block .val.stuck{color:var(--wn);font-size:12.5px}
+textarea{
+  width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;
+  color:var(--tx);padding:10px 12px;font-size:13px;font-family:inherit;
+  resize:vertical;min-height:60px;margin-top:6px;line-height:1.6;
+}
+textarea:focus{outline:none;border-color:var(--ac2)}
+textarea::placeholder{color:#3F5170}
+.btn{
+  border:none;border-radius:11px;padding:13px 20px;font-size:13.5px;font-weight:500;
+  cursor:pointer;font-family:inherit;transition:.16s;width:100%;margin-top:14px;
+}
+.btn-main{background:var(--ac2);color:#04262E}
+.btn-main:hover{background:#67E8F9}
+.btn-done{background:#0F2E24;color:var(--ok);border:1px solid #1A4A3C}
+.btn-ghost{background:transparent;color:var(--mu);border:1px solid var(--bd);width:auto;padding:8px 13px;font-size:11.5px;margin-top:0}
+.btn-ghost:hover{color:var(--tx);border-color:var(--bd2)}
+.note-done{font-size:12px;color:var(--ok);margin-top:12px;display:flex;gap:6px;align-items:center}
+.note-done::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+footer{border-top:1px solid var(--bd);margin-top:34px;padding:18px 0 30px;display:flex;gap:8px;flex-wrap:wrap}
+.hint{font-size:11px;color:var(--mu2);line-height:1.75;margin-top:14px;padding-bottom:26px}
+
+.toast{
+  position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);
+  background:#152238;border:1px solid var(--bd2);color:var(--tx);
+  padding:10px 18px;border-radius:11px;font-size:12.5px;z-index:200;
+  opacity:0;pointer-events:none;transition:.24s;white-space:nowrap;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 里程碑弹句 ---------- */
+.cheer{
+  position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(22px) scale(.97);
+  width:calc(100% - 40px);max-width:440px;z-index:210;
+  opacity:0;pointer-events:none;transition:.34s cubic-bezier(.22,1.2,.36,1);
+}
+.cheer.on{opacity:1;transform:translateX(-50%) translateY(0) scale(1);pointer-events:auto}
+.cheer-in{
+  position:relative;overflow:hidden;
+  background:linear-gradient(150deg,#1A2233,#101724 62%);
+  border:1px solid rgba(245,166,35,.34);
+  border-radius:15px;padding:15px 17px 15px 18px;
+  box-shadow:0 16px 44px rgba(0,0,0,.62),0 0 0 1px rgba(245,166,35,.06),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.cheer-in::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#F5A623,#FFD98A);opacity:.9;
+}
+.cheer-in::after{
+  content:'';position:absolute;right:-40px;top:-50px;width:130px;height:130px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.13),transparent 70%);pointer-events:none;
+}
+.cheer-tag{
+  font-size:10px;letter-spacing:1.4px;color:#E0A34A;font-weight:700;
+  text-transform:uppercase;margin-bottom:7px;
+}
+.cheer-tx{font-size:13.5px;line-height:1.72;color:#EAF0F8;letter-spacing:.2px}
+.cheer-close{
+  position:absolute;right:6px;top:6px;width:26px;height:26px;border:none;border-radius:8px;
+  background:transparent;color:#7C8CA6;font-size:15px;line-height:1;cursor:pointer;
+}
+.cheer-close:hover{background:rgba(255,255,255,.06);color:#C6D3E5}
+@media (max-width:480px){
+  .cheer{bottom:20px;width:calc(100% - 28px)}
+  .cheer-tx{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="homeView">
+  <div class="hero">
+    <h1>Jepson 的造芯进度</h1>
+    <div class="sub">从大本营走到峰顶。每点亮一格，离一颗真芯片近一点。</div>
+  </div>
+
+  <div class="mt-outer">
+    <div class="mt-scroll" id="mtScroll">
+      <div class="mt-canvas" id="mtCanvas">
+        <picture>
+          <source srcset="assets/route_1600.webp" type="image/webp">
+          <img src="assets/route_1600.jpg" alt="珠峰路线图" id="mtImg">
+        </picture>
+      </div>
+    </div>
+    <div class="hint-swipe">← 左右拖动 →</div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="bar-meta">
+      <span id="progText">0 / 0</span>
+      <b id="progPct">0%</b>
+    </div>
+    <div class="bar"><div class="bar-fill" id="progBar"></div></div>
+  </div>
+
+  <section>
+    <h2>今天可以做的<span>三件</span></h2>
+    <div class="today" id="today"></div>
+  </section>
+
+  <section>
+    <h2>六个阶段<span id="stageCount"></span></h2>
+    <div class="list" id="stageList"></div>
+  </section>
+
+  <footer>
+    <button class="btn-ghost" onclick="exportJSON()">备份到文件</button>
+    <button class="btn-ghost" onclick="document.getElementById('imp').click()">从文件恢复</button>
+    <button class="btn-ghost" onclick="copyShare()">复制一句话发群里</button>
+    <button class="btn-ghost" style="margin-left:auto" onclick="resetAll()">清空</button>
+    <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(this)">
+  </footer>
+  <div class="hint">
+    进度存在这台设备的浏览器里，换设备不会自动同步——要换设备就先用「备份到文件」导出，再在新设备上「从文件恢复」。<br>
+    截图不要存在这里。自己在电脑上建个文件夹，按编号命名，比如 F3-04.png。一年后能拿出来的，是那个文件夹。
+  </div>
+</div>
+
+<div class="wrap" id="stageView">
+  <button class="back" onclick="go('')">← 回到路线</button>
+  <div id="stageBody"></div>
+</div>
+
+<div id="modal" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="cheer" id="cheer" onclick="if(event.target.id!=='cheerClose')hideCheer()">
+  <div class="cheer-in">
+    <button class="cheer-close" id="cheerClose" onclick="event.stopPropagation();hideCheer()">×</button>
+    <div class="cheer-tag" id="cheerTag"></div>
+    <div class="cheer-tx" id="cheerTx"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   数据层：与界面分离，将来换云端只动 Store 一个对象
+   ------------------------------------------------------------
+   现在：localStorage
+   将来：把 Store.init / Store.persist 换成 Supabase 调用即可，
+        所有 UI 都已经是 await 调用，调用点不用改。
+   ============================================================ */
+const SCHEMA = 1;
+const KEY = 'ysyx_progress_v1';
+
+const Store = {
+  backend: 'local',          // 'local' | 'cloud'，将来切云时改这里
+  data: {},
+  listeners: [],
+
+  async init(){
+    if (this.backend === 'cloud') {
+      // 预留：this.data = await Cloud.load()
+    }
+    try {
+      const raw = localStorage.getItem(KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      this.data = (parsed && parsed.schema === SCHEMA) ? parsed.cells : {};
+    } catch(e) { this.data = {}; }
+  },
+
+  /* 唯一的写入口：将来云端在这里发请求，失败可回滚 */
+  async persist(){
+    const payload = { schema: SCHEMA, updatedAt: new Date().toISOString(), cells: this.data };
+    if (this.backend === 'cloud') {
+      // 预留：await Cloud.save(payload)
+    }
+    try { localStorage.setItem(KEY, JSON.stringify(payload)); } catch(e){}
+    this.listeners.forEach(fn => fn());
+  },
+
+  get(id){ return this.data[id] || null },
+  isDone(id){ return !!this.data[id]?.done },
+  note(id){ return this.data[id]?.note || '' },
+
+  async setDone(id, done, note){
+    if (done){
+      this.data[id] = { done:true, note: note ?? this.note(id), at: this.data[id]?.at || today() };
+    } else {
+      delete this.data[id];
+    }
+    await this.persist();
+  },
+
+  async setNote(id, note){
+    if (!this.data[id]) return;
+    this.data[id].note = note;
+    await this.persist();
+  },
+
+  dump(){ return { schema: SCHEMA, updatedAt: new Date().toISOString(), cells: this.data } },
+
+  async load(obj){
+    if (!obj || typeof obj !== 'object') throw new Error('bad file');
+    const cells = obj.cells || obj;
+    this.data = {};
+    for (const k in cells){
+      const v = cells[k];
+      if (v && (v.done || v.note)) this.data[k] = { done: !!v.done, note: v.note || '', at: v.at || '' };
+    }
+    await this.persist();
+  }
+};
+
+/* ============================================================
+   课程内容
+   ============================================================ */
+const F_CELLS = [
+  {id:'F1-01', t:'读完两篇讲提问的文章', d:'讲义里指定的两篇，讲怎么问别人才愿意答', out:'一句话：你以前问过的最糟糕的问题是什么，为什么没人回', type:'文字', min:40, stuck:'读不下去就只读标题和小标题，知道有这回事就行，不用逐字。'},
+  {id:'F1-02', t:'写一篇不少于 800 字的读后感', d:'就着上面两篇写，写你自己踩过的坑最省力', out:'一篇 800 字以上的文字', type:'文字', min:90, stuck:'写之前先列三行提纲：我以前的问法 / 别人为什么不回 / 我以后怎么改。凑够三层就有 800 字。'},
+  {id:'F1-03', t:'通识问卷做到 100 分', d:'入学答辩的硬门槛，很多人到最后才发现', out:'一张 100 分的截图', type:'截图', min:30, stuck:'可以无限重做。第一次故意做错，把错题抄下来，第二次就过了。'},
+  {id:'F2-01', t:'装上 Logisim，打开看一眼', d:'目标不是学会用，是让它能打开', out:'一张软件主界面的截图', type:'截图', min:40, stuck:'双击没反应，多半是缺 Java。先装 JDK，或者找自带 Java 的版本。这一步卡住的人最多，不是你笨。'},
+  {id:'F2-02', t:'点亮一个灯', d:'拖一个输入、一个输出，连一根线', out:'灯亮的截图或 3 秒录屏', type:'截图', min:30, stuck:'找不到元件就点左侧的文件夹图标，里面按类别分好了。'},
+  {id:'F2-03', t:'加一个开关：按一下亮，再按一下灭', d:'这一步开始有点「记住状态」的意思了', out:'15 秒录屏，按两下给他看', type:'截图', min:45, stuck:'做不出先跳过，去 F3 看完锁存器再回来，那时候一眼就懂。'},
+  {id:'F3-01', t:'从晶体管看懂几种门', d:'与非门、或非门、或门、异或门，讲义让你分析它们的结构', out:'手画的或门晶体管结构照片', type:'照片', min:90, stuck:'不用背，只要明白一件事：门电路是晶体管拼出来的，不是天上掉的。'},
+  {id:'F3-02', t:'在 Logisim 搭异或门、同或门', d:'用基本门拼出来，搭完仿真检查', out:'电路截图 + 你用了几个晶体管', type:'截图', min:60, stuck:'同或门最优解只要 6 个晶体管，搭不出来就用多几个，先跑通再说。'},
+  {id:'F3-03', t:'搭 2-4 译码器，再扩成 3-8', d:'讲义要求必须用门电路搭，不许用现成元件', out:'电路截图，输入变化时输出跟着变', type:'截图', min:90, stuck:'先画真值表再连线。四个输出的规律是「哪一位是 1」，看着真值表连就不会乱。'},
+  {id:'F3-04', t:'搭七段数码管译码器', d:'先做十进制 0-9，再做十六进制 A-F', out:'数码管按输入显示数字的录屏', type:'截图', min:150, stuck:'先做一位（a 段），做通了剩下六位是重复劳动。这一格是全 F3 最花时间的，留整块时间。'},
+  {id:'F3-05', t:'搭 16-4 编码器、4-2 优先编码器', d:'编码器是译码器反过来', out:'电路截图，输入独热码显示对应数字', type:'截图', min:90, stuck:'优先编码器可以不管「非独热码」的情况，讲义明确说未定义就是随便取值。'},
+  {id:'F3-06', t:'搭 2 选 1、4 选 1 选择器', d:'处理器里用得最多的元件', out:'电路截图', type:'截图', min:60, stuck:'选择器 = 译码器 + 一堆与门 + 一个或门，看讲义那张电路图照抄结构。'},
+  {id:'F3-07', t:'做一个能切换十/十六进制的数码管', d:'5 个拨码开关，1 个管进制，4 个管数据', out:'切换时显示变化的录屏', type:'截图', min:75, stuck:'把 F3-04 和 F3-06 拼起来就行，这格是复习不是新知识。'},
+  {id:'F3-08', t:'搭 4 位比较器', d:'两组拨码开关比较，相等就亮灯', out:'截图：相等时灯亮，不等时灯灭', type:'截图', min:45, stuck:'用同或门逐位比，再全部与起来。'},
+  {id:'F3-09', t:'搭加法器：半加 → 全加 → 4 位', d:'这一格开始，你的电路会「算数」了', out:'两张数相加、数码管显示结果的截图', type:'截图', min:120, stuck:'进位是从低位往高位传的，连的时候从左往右接，别接反。'},
+  {id:'F3-10', t:'搭减法器，再试原码和反码加法器', d:'讲义让你搭三种表示法的加法器，比较它们', out:'减法结果截图 + 溢出检测截图', type:'截图', min:120, stuck:'补码那块绕，先只做减法器，原码反码看懂思路就行。'},
+  {id:'F3-11', t:'搭 SR 锁存器和 D 锁存器', d:'从这里开始，电路会「记住」东西', out:'截图，加上你触发振荡时的报错', type:'截图', min:90, stuck:'讲义专门让你触发一次亚稳态（屏幕上报 Oscillation apparent），看到那个报错是正常的，是任务的一部分。'},
+  {id:'F3-12', t:'搭 D 触发器，再拼成 4 位寄存器', d:'触发器是芯片里所有存储的起点', out:'写入数据、数码管显示的截图', type:'截图', min:120, stuck:'时钟接按钮，按一下走一步。看不懂主从结构就先照讲义图连，跑通了再回头看原理。'},
+  {id:'F3-13', t:'设计数列求和电路 1+2+…+10', d:'讲义里唯一一个「像处理器」的东西', out:'算出 55 的截图', type:'截图', min:90, stuck:'寄存器存和，加法器算，时钟推一步加一次。做完这格，F4 会轻松很多。'},
+  {id:'F4-01', t:'手工执行一遍数列求和程序', d:'讲义给了三条指令，你扮演 CPU，一格一格推', out:'手写的寄存器变化表照片', type:'照片', min:60, stuck:'画个表：每一步写指令、寄存器值、下一步跳哪。推三行就顺手了。'},
+  {id:'F4-02', t:'用三条指令写 1+3+5+7+9', d:'只有 add / li / bne，写出来你会很爽', out:'纸上的程序 + 状态表', type:'照片', min:60, stuck:'写不出来就照 F4-01 的求和思路改：把加 1 改成加 2。'},
+  {id:'F4-03', t:'在 godbolt 上跑一段 C 程序', d:'浏览器里直接跑，不用装环境', out:'终端输出 z = 3 的截图', type:'截图', min:30, stuck:'进去点 Add new，选 Execution Only，不然看不到输出。'},
+  {id:'F4-04', t:'用状态机的眼光看回你的求和电路', d:'F3-13 那个电路，其实就是个状态机', out:'手写的电路状态变化表', type:'照片', min:60, stuck:'把「时钟推一步」当成「执行一条指令」，两边的表应该长得一样。'}
+];
+
+const STAGES = [
+  {
+    id:'F', name:'F · 基础', short:'F', x:82.6, y:86.7, hours:'约 39 小时', side:'l',
+    tag:'大本营 → 前进营地',
+    desc:'从零开始，先弄明白电路怎么算数。不碰编程，只画电路。',
+    note:'F3 占一半时间，是第一个真坡。F4 全在纸上推，不碰电脑，正好换脑子。',
+    cells:F_CELLS
+  },
+  {
+    id:'E', name:'E · 进阶', short:'E', x:69.8, y:81.0, hours:'约 80 小时',
+    tag:'前进营地 → 一号营地',
+    desc:'学会用文字描述硬件，写出一颗能跑程序的迷你处理器。',
+    note:'做完 E 才能申请入学答辩。E2 的递归别偷懒，D 阶段调试器要用。',
+    cells:[
+      {id:'E1', t:'硬件描述语言 Verilog', d:'官方 20 小时。大二上有配套实验课', out:'一段能仿真出正确波形的模块', type:'大课', min:1200, stuck:'跟课走。大二上《数字逻辑设计与 Verilog HDL 实验课》能覆盖掉大半。'},
+      {id:'E2', t:'C 语言程序设计', d:'官方 20 小时。大一下《程序设计基础》对应', out:'几个自己写的 C 程序能跑通', type:'大课', min:1200, stuck:'递归必须练。D 阶段的调试器靠它，跳过后必回头补。'},
+      {id:'E3', t:'Linux 安装与基本使用', d:'官方 10 小时', out:'一个能用的 Linux 环境', type:'大课', min:600, stuck:'Windows 上先装 WSL2，配 VS Code。别装双系统，删了不动系统。'},
+      {id:'E4', t:'处理器仿真与验证', d:'跑通官方给的测试', out:'测试全部通过的截图', type:'节点', min:600, stuck:'先跑通最简单的那个测试，再一个个加。'},
+      {id:'E5', t:'功能完备的迷你 RISC-V 处理器', d:'E 阶段的主产物', out:'能跑通全部测试的处理器源码', type:'节点', min:1800, stuck:'卡住就看波形，别猜。波形里每个信号都能对上代码。'},
+      {id:'E6', t:'简易运行时环境', d:'让 C 程序能在你的处理器上跑', out:'一个能在自己处理器上跑的 C 程序', type:'节点', min:600, stuck:'先让最简单的 while(1) 跑起来。'},
+      {id:'E7', t:'简易总线和 SoC', d:'官方 10 小时', out:'处理器接上外设能读写', type:'大课', min:600, stuck:'总线先照讲义搭最简版本，能读写就够。'},
+      {id:'E8', t:'后端物理设计与流片准备', d:'了解从代码到硅片的流程', out:'一份流程走通的记录', type:'节点', min:600, stuck:'这一节偏了解流程，不必做到能独立流片。'},
+      {id:'E9', t:'提交入学答辩申请', d:'F + E 全部完成后才到这一步', out:'一份被受理的申请', type:'节点', min:120, stuck:'申请前先确认通识问卷 100 分、学习记录连着交、读后感写完。缺一样会被打回。'}
+    ]
+  },
+  {
+    id:'D', name:'D · 深入', short:'D', x:60.9, y:57.3, hours:'约 74 小时',
+    tag:'一号营地 → 二号营地',
+    desc:'从 C 代码一路看到机器码，写一个能调试自己程序的调试器。',
+    note:'D2 调试器是这一级最硬的一关，表达式求值和监视点全靠 E2 的递归。',
+    cells:[
+      {id:'D1', t:'C 代码到二进制', d:'看懂编译、汇编、链接产出了什么', out:'一份用 objdump 分析的过程记录', type:'节点', min:600, stuck:'先只看一个最简单的 main，别一上来啃大工程。'},
+      {id:'D2', t:'简易调试器', d:'断点、单步、看寄存器、表达式求值、监视点', out:'能调试自己程序的可执行文件', type:'硬关', min:1800, stuck:'表达式求值用递归下降写；监视点先只支持单变量。'},
+      {id:'D3', t:'RISC-V 指令集', d:'看懂每条指令在做什么', out:'一份指令分类整理', type:'节点', min:900, stuck:'先只记 RV32I 的 6 种格式，别背全部指令。'},
+      {id:'D4', t:'机器级表示', d:'指令怎么变成 32 位二进制', out:'手算一条指令编码并验证', type:'节点', min:600, stuck:'拿一条 add 手算，再用工具对答案。'},
+      {id:'D5', t:'AM 运行时环境', d:'抽象机器层，让程序不依赖具体硬件', out:'能在 AM 上跑的程序', type:'节点', min:900, stuck:'先只实现 putch 和 halt 两个，跑通再补。'},
+      {id:'D6', t:'RTL 仿真', d:'用波形看硬件在干什么', out:'一份时序波形分析记录', type:'节点', min:600, stuck:'先看时钟和复位，再看数据。'},
+      {id:'D7', t:'工具链', d:'编译、反汇编、链接脚本', out:'一份自己配的工具链说明', type:'节点', min:600, stuck:'照讲义给的版本装，别追最新。'},
+      {id:'D8', t:'支持 RV32E 的 NPC', d:'自己写的一颗处理器核', out:'能跑指令测试的 NPC 源码', type:'硬关', min:2400, stuck:'先跑通一条指令，再一条条加。每条都留一个测试。'}
+    ]
+  },
+  {
+    id:'C', name:'C · 系统', short:'C', x:54.1, y:46.9, hours:'约 54 小时',
+    tag:'二号营地 → 三号营地',
+    desc:'把处理器接成一台真的计算机：能读 ELF、能驱动设备、能跑在总线上。',
+    note:'C 阶段考核通过会发证书，这是第一个能写进材料的东西。',
+    cells:[
+      {id:'C1', t:'ELF 与链接', d:'可执行文件长什么样，怎么被加载', out:'一份 ELF 结构分析记录', type:'节点', min:900, stuck:'先用 readelf 把各段打出来看一遍。'},
+      {id:'C2', t:'设备与 IO', d:'程序怎么和外部设备说话', out:'一份设备驱动跑通的记录', type:'节点', min:900, stuck:'先做最简单的串口输出。'},
+      {id:'C3', t:'调试技巧', d:'出问题怎么定位', out:'三个自己踩过的坑的记录', type:'节点', min:600, stuck:'从「先证明哪一层坏了」开始，别一上来改代码。'},
+      {id:'C4', t:'总线', d:'多个设备怎么共用一组线', out:'一份总线协议实现记录', type:'节点', min:900, stuck:'先只支持一个主设备。'},
+      {id:'C5', t:'SoC 计算机系统', d:'处理器 + 内存 + 外设，一台完整机器', out:'能跑程序的完整 SoC', type:'硬关', min:1800, stuck:'先把内存接对，跑通最简单的程序，再加外设。'}
+    ]
+  },
+  {
+    id:'B', name:'B · 优化', short:'B', x:51.0, y:36.6, hours:'约 60 小时',
+    tag:'三号营地 → 突击营地',
+    desc:'跑操作系统、算时序、加缓存、上流水线。这一级通过考核可以申请流片。',
+    note:'B 是能拿到流片资格的地方，也是大多数人停下的地方。急不得。',
+    cells:[
+      {id:'B1', t:'异常处理与简易操作系统', d:'中断、异常、上下文切换', out:'能跑一个极简 OS', type:'硬关', min:1800, stuck:'先让定时器中断进来，再谈切换。'},
+      {id:'B2', t:'时序分析', d:'电路跑多快，瓶颈在哪', out:'一份关键路径分析记录', type:'节点', min:900, stuck:'先算最长的一条组合逻辑路径。'},
+      {id:'B3', t:'性能优化与缓存', d:'让程序跑得更快', out:'优化前后的对比数据', type:'节点', min:1200, stuck:'先量再改，别凭感觉优化。'},
+      {id:'B4', t:'流水线处理器', d:'一条指令拆成几步并行做', out:'能跑测试的流水线处理器', type:'硬关', min:2400, stuck:'先做五级流水不带冒险处理，跑通再加转发。'}
+    ]
+  },
+  {
+    id:'A', name:'A · 前沿', short:'A', x:50.8, y:23.4, hours:'课时未公布',
+    tag:'突击营地 → 冲顶',
+    desc:'乘除法器、系统调用、虚存、特权级、启动 Linux、缓存进阶、分支预测。',
+    note:'A 阶段七项目前课时都标 0，没有讲义、没有考核、没有证书。这一级现在没有可执行的定义，只能作为方向，不要排时间表。',
+    cells:[
+      {id:'A1', t:'乘除法器', d:'硬件怎么算乘除', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A2', t:'系统调用', d:'用户程序怎么请求内核干活', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A3', t:'虚存管理', d:'地址翻译与页表', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A4', t:'特权级与 xv6', d:'用户态和内核态怎么隔离', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A5', t:'启动 Linux', d:'让真操作系统跑在自己的处理器上', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A6', t:'缓存进阶', d:'多级缓存与一致性', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'},
+      {id:'A7', t:'分支预测', d:'猜对下一步，跑得更快', out:'—', type:'方向', min:0, stuck:'官方未开放讲义。'}
+    ]
+  }
+];
+
+const ALL = STAGES.flatMap(s => s.cells);
+
+/* ============================================================
+   里程碑文案
+   ------------------------------------------------------------
+   每个阶段四个节点：做完第 1 格 / 过 30% / 过 80% / 全部点亮
+   只在「点亮」时触发，取消不触发。
+   ============================================================ */
+const MILESTONE = {
+  F: {
+    first: '上电了。现在只有你一个人在跑，硬件上这叫单核，不叫孤独。',
+    p30:   '组合逻辑通了：输入进去，输出就该出来，中间不讲人情。',
+    p80:   '时钟每跳一次，你就往前挪一格。CPU 的一生也就这样。',
+    p100:  'F 走完了。你做的那个盒子能算到 55，慢，但它没抄答案。'
+  },
+  E: {
+    first: '第一行 Verilog 写下去，你从「画电路的人」变成了「描述电路的人」——后者可以复制粘贴。',
+    p30:   '编译器不骂你了。这不代表它对，只代表它还没看懂你在干什么。',
+    p80:   '波形对上了。你先截图，然后开始怀疑波形。恭喜，这是工程师的标准反应。',
+    p100:  'E 走完了，可以递入学答辩。答辩只证明一件事：这东西是你做的。所以别删报错记录，那才是证据。'
+  },
+  D: {
+    first: '从 C 到二进制，中间那层你以前只当它不存在。现在你下去了。',
+    p30:   '断点能停了。从此 printf 属于原始人——虽然你还得继续用。',
+    p80:   'NPC 跑起指令了。就几条，但每条都是它自己算的，没作弊。',
+    p100:  'D 走完。你有个能执行指令的东西了。x86 当年也不比这体面多少。'
+  },
+  C: {
+    first: 'undefined reference 终于消失了。这种快乐，说给外人听是解释不清的。',
+    p30:   '会读 ELF 了。以后程序崩了，你的第一反应从「重启」变成「看看 core」。',
+    p80:   '总线通了，CPU 和外设开始对话。它们说的第一句通常是「你是谁」。',
+    p100:  'C 走完，你有一台完整的计算机了。慢得离谱，但从复位向量往后，全是你写的。'
+  },
+  B: {
+    first: '第一次处理异常。程序出错你不再慌，因为你知道该去哪儿看。',
+    p30:   '操作系统跑起来了。对着进程表你可以说：这些都是我生的。',
+    p80:   '流水线填满了。手册上那五级你在纸上算过无数遍，现在它在跑。',
+    p100:  'B 通过，可以申请流片。提醒一句：流片是排队，不是下单即到。接下来的活是等。'
+  },
+  A: {
+    first: '乘法器动了。你让硬件做了小学二年级的事，代价是几百个门。',
+    p30:   '系统调用通了。用户态和内核态之间，现在有一扇合法的门。',
+    p80:   '虚存跑起来了。每个进程都以为自己独占整台机器，这个谎撒得很漂亮。',
+    p100:  'A 走完，从门电路到 Linux 你全走了一遍。剩下的事只有一件：等一颗刻着名字的芯片回来。'
+  }
+};
+const MS_LABEL = { first:'第一格 · 已上电', p30:'阶段 30%', p80:'阶段 80%', p100:'阶段完成' };
+
+
+/* ============================================================
+   工具
+   ============================================================ */
+function today(){
+  const d = new Date();
+  return (d.getMonth()+1) + '月' + d.getDate() + '日';
+}
+function stageOf(cellId){
+  return STAGES.find(s => s.cells.some(c => c.id === cellId));
+}
+function countDone(cells){ return cells.filter(c => Store.isDone(c.id)).length }
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('on');
+  clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('on'), 2000);
+}
+
+/* 里程碑弹句 */
+let cheerTimer = null;
+function showCheer(tag, text){
+  const box = document.getElementById('cheer');
+  if (!box) return;
+  document.getElementById('cheerTag').textContent = tag;
+  document.getElementById('cheerTx').textContent = text;
+  box.classList.add('on');
+  clearTimeout(cheerTimer);
+  cheerTimer = setTimeout(hideCheer, 7000);
+}
+function hideCheer(){
+  const box = document.getElementById('cheer');
+  if (box) box.classList.remove('on');
+  clearTimeout(cheerTimer);
+}
+/* 判断这次点亮踩到了哪个节点，返回 key 或 null
+   档位按格数算死，不用百分比区间，避免小阶段两档撞在一起 */
+function milestoneHit(stage, before, after){
+  const n = stage.cells.length;
+  if (!n || after <= before) return null;
+  const t30 = Math.max(2, Math.ceil(n * 0.3));
+  const t80 = Math.min(n - 1, Math.max(t30 + 1, Math.ceil(n * 0.8)));
+  if (after === n) return 'p100';
+  if (after === 1) return 'first';        // 第一格单独一句话
+  if (after === t80) return 'p80';
+  if (after === t30) return 'p30';
+  return null;
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])) }
+
+/* ============================================================
+   渲染：首页
+   ============================================================ */
+function renderHome(){
+  // 热区
+  const canvas = document.getElementById('mtCanvas');
+  canvas.querySelectorAll('.hot').forEach(n => n.remove());
+  STAGES.forEach(s => {
+    const doneN = countDone(s.cells);
+    const isDone = doneN === s.cells.length;
+    const isCur = currentStage()?.id === s.id;
+    const btn = document.createElement('button');
+    btn.className = 'hot' + (isDone ? ' done' : '') + (isCur ? ' cur' : '') + (s.side === 'l' ? ' l' : '');
+    btn.style.left = s.x + '%';
+    btn.style.top = s.y + '%';
+    btn.setAttribute('aria-label', s.name);
+    btn.dataset.id = s.id;
+    btn.innerHTML = '<i></i><b>' + s.short + '</b>';
+    btn.onclick = () => go(s.id);
+    canvas.appendChild(btn);
+  });
+
+  // 总进度
+  const done = countDone(ALL), total = ALL.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('progText').textContent = done + ' / ' + total + ' 格';
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+
+  // 今天三件
+  const curStage = currentStage();
+  const picks = curStage ? curStage.cells.filter(c => !Store.isDone(c.id)).slice(0, 3) : [];
+  const todayEl = document.getElementById('today');
+  if (!picks.length){
+    todayEl.innerHTML = '<div class="tcard" style="cursor:default"><div class="body">' +
+      '<div class="tt">F 到 A 的格子都点亮了。</div>' +
+      '<div class="ds">下一步是准备入学答辩。找社团群里的助教要清单。</div></div></div>';
+  } else {
+    todayEl.innerHTML = picks.map((c, i) =>
+      '<div class="tcard" onclick="openSheet(\'' + c.id + '\')">' +
+        '<div class="idx">' + (i+1) + '</div>' +
+        '<div class="body"><div class="st">' + curStage.id + '</div>' +
+        '<div class="tt">' + esc(c.t) + '</div>' +
+        '<div class="ds">交：' + esc(c.out) + '</div></div></div>'
+    ).join('');
+  }
+
+  // 阶段列表
+  const sl = document.getElementById('stageList');
+  sl.innerHTML = STAGES.map(s => {
+    const d = countDone(s.cells), n = s.cells.length;
+    const isCur = curStage?.id === s.id;
+    return '<div class="item' + (d === n ? ' done' : '') + '" onclick="go(\'' + s.id + '\')">' +
+      '<div class="it-n"' + (isCur ? ' style="background:#12283B;color:#38BDF8"' : '') + '>' + s.short + '</div>' +
+      '<div class="it-b"><div class="it-t">' + esc(s.desc) + '</div>' +
+      '<span class="chip">' + d + ' / ' + n + '</span>' +
+      '<span class="chip" style="margin-left:6px">' + s.hours + '</span></div></div>';
+  }).join('');
+}
+
+function currentStage(){
+  for (const s of STAGES) if (s.cells.some(c => !Store.isDone(c.id))) return s;
+  return null;
+}
+
+/* ============================================================
+   渲染：阶段页
+   ============================================================ */
+function renderStage(id){
+  const s = STAGES.find(x => x.id === id);
+  if (!s) { go(''); return }
+  const idx = STAGES.indexOf(s);
+  const d = countDone(s.cells), n = s.cells.length;
+
+  const alt = STAGES.map((x, i) => {
+    const left = 6 + (i / (STAGES.length - 1)) * 88;
+    const on = x.id === s.id;
+    return '<div class="alt-lbl' + (on?' on':'') + '" style="left:' + left + '%">' + x.short + '</div>' +
+           '<div class="alt-dot' + (on?' on':'') + '" style="left:' + left + '%"></div>';
+  }).join('');
+
+  const items = s.cells.map((c, i) => {
+    const done = Store.isDone(c.id);
+    const nt = Store.note(c.id);
+    return '<div class="item' + (done?' done':'') + '" onclick="openSheet(\'' + c.id + '\')">' +
+      '<div class="it-n">' + (done ? '✓' : (i+1)) + '</div>' +
+      '<div class="it-b"><div class="it-t">' + esc(c.t) + '</div>' +
+      '<div class="it-d">' + esc(c.d) + '</div>' +
+      '<span class="chip' + (c.type==='方向'?' warn':'') + '">' + c.type + (c.min ? ' · 约' + c.min + '分钟' : '') + '</span>' +
+      (nt ? '<div class="it-d" style="margin-top:6px;color:#9DB0C9">「' + esc(nt) + '」</div>' : '') +
+      '</div></div>';
+  }).join('');
+
+  document.getElementById('stageBody').innerHTML =
+    '<div class="st-hd"><div class="tag">' + esc(s.tag) + '</div>' +
+    '<h1>' + esc(s.name) + '</h1>' +
+    '<div class="meta">' + esc(s.desc) + '</div></div>' +
+    '<div class="alt"><div class="alt-track"></div>' + alt + '</div>' +
+    '<div class="bar-wrap" style="margin-top:6px">' +
+      '<div class="bar-meta"><span>第 ' + (idx+1) + ' / ' + STAGES.length + ' 站 · ' + d + ' / ' + n + ' 格</span><b>' + (n?Math.round(d/n*100):0) + '%</b></div>' +
+      '<div class="bar"><div class="bar-fill" style="width:' + (n?Math.round(d/n*100):0) + '%"></div></div>' +
+    '</div>' +
+    (s.note ? '<div class="hint" style="margin-top:14px;color:#8496AE">' + esc(s.note) + '</div>' : '') +
+    '<div class="list">' + items + '</div>';
+}
+
+/* ============================================================
+   路由
+   ============================================================ */
+function go(id){
+  if (id){
+    location.hash = '#/' + id;
+  } else {
+    location.hash = '';
+  }
+}
+function onRoute(){
+  const m = location.hash.match(/^#\/([A-Z])$/);
+  if (m){
+    document.getElementById('homeView').classList.add('off');
+    document.getElementById('stageView').classList.add('on');
+    renderStage(m[1]);
+    window.scrollTo(0, 0);
+  } else {
+    document.getElementById('stageView').classList.remove('on');
+    document.getElementById('homeView').classList.remove('off');
+    renderHome();
+  }
+}
+window.addEventListener('hashchange', onRoute);
+
+/* ============================================================
+   弹层
+   ============================================================ */
+let sheetId = null;
+function openSheet(id){
+  const c = ALL.find(x => x.id === id);
+  if (!c) return;
+  hideCheer();
+  sheetId = id;
+  const s = stageOf(id);
+  const done = Store.isDone(id);
+  const nt = Store.note(id);
+  const rec = Store.data[id];
+  document.getElementById('sheet').innerHTML =
+    '<div class="grab"></div>' +
+    '<div class="sheet-hd"><h3>' + esc(c.t) + '</h3>' +
+    '<button class="close" onclick="closeSheet()">×</button></div>' +
+    '<div class="stag">' + s.id + ' · ' + esc(s.name) + '</div>' +
+    '<div class="block"><div class="lb">这一步做什么</div><div class="val">' + esc(c.d) + '</div></div>' +
+    '<div class="block"><div class="lb">交什么才算过</div><div class="val out">' + esc(c.out) + '</div></div>' +
+    '<div class="block"><div class="lb">大概要多久</div><div class="val">' + (c.min ? '约 ' + c.min + ' 分钟' : '待定') + '</div></div>' +
+    '<div class="block"><div class="lb">卡住了怎么过</div><div class="val stuck">' + esc(c.stuck) + '</div></div>' +
+    '<div class="block"><div class="lb">留一句给自己（可选）</div>' +
+    '<textarea id="note" placeholder="哪一步最费劲、下次怎么绕过、想吐槽什么">' + esc(nt) + '</textarea></div>' +
+    (done
+      ? '<div class="note-done">这格已经点亮了' + (rec?.at ? ' · ' + rec.at : '') + '</div>' +
+        '<button class="btn btn-done" onclick="toggleDone(\'' + id + '\', true)">取消点亮</button>'
+      : '<button class="btn btn-main" onclick="toggleDone(\'' + id + '\', false)">点亮这一格</button>');
+  document.getElementById('modal').classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet(){
+  document.getElementById('modal').classList.remove('on');
+  document.body.style.overflow = '';
+  sheetId = null;
+}
+async function toggleDone(id, wasDone){
+  const noteEl = document.getElementById('note');
+  const note = noteEl ? noteEl.value.trim() : '';
+  const st = stageOf(id);
+  const before = st ? countDone(st.cells) : 0;
+  await Store.setDone(id, !wasDone, note);
+  closeSheet();
+  onRoute();
+  if (wasDone){ toast('已取消点亮'); return }
+  const after = st ? countDone(st.cells) : 0;
+  const key = st ? milestoneHit(st, before, after) : null;
+  const msg = key ? (MILESTONE[st.id] || {})[key] : null;
+  if (msg){
+    showCheer(st.id + ' 段 · ' + MS_LABEL[key], msg);
+  } else {
+    toast('点亮了');
+  }
+}
+
+/* ============================================================
+   导入导出
+   ============================================================ */
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(Store.dump(), null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  const d = new Date();
+  const name = 'Jepson造芯进度_' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '.json';
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  toast('已导出：' + name);
+}
+
+async function importJSON(input){
+  const f = input.files[0];
+  if (!f) return;
+  try {
+    const txt = await f.text();
+    await Store.load(JSON.parse(txt));
+    onRoute();
+    toast('已恢复进度');
+  } catch(e){
+    toast('这个文件读不出来');
+  }
+  input.value = '';
+}
+
+function copyShare(){
+  const done = countDone(ALL);
+  const st = currentStage();
+  const cur = st ? st.cells.find(c => !Store.isDone(c.id)) : null;
+  const txt = 'Jepson 的造芯进度：点亮 ' + done + '/' + ALL.length + ' 格' +
+              (cur ? '，正在做「' + cur.t + '」' : '，F 到 A 全点亮了');
+  navigator.clipboard.writeText(txt).then(()=>toast('已复制，可以直接发群里')).catch(()=>toast('复制失败，换个浏览器试试'));
+}
+
+async function resetAll(){
+  if (!confirm('清空所有进度？清完找不回来，建议先「备份到文件」。')) return;
+  Store.data = {};
+  await Store.persist();
+  onRoute();
+  toast('已清空');
+}
+
+/* ============================================================
+   启动
+   ============================================================ */
+function fitMap(){
+  const sc = document.getElementById('mtScroll');
+  const cv = document.getElementById('mtCanvas');
+  if (!sc || !cv) return;
+  const overflow = cv.offsetWidth - sc.clientWidth;
+  if (overflow <= 4) { sc.scrollLeft = 0; return }
+  // 六个点横跨的宽度在手机上放不进一屏，硬塞必然切掉一端。
+  // 改成对准「你现在所在的这一站」——开局是 F（大本营），走起来自动跟着走。
+  const cur = currentStage();
+  const want = cur ? cur.id : 'A';
+  const el = cv.querySelector('.hot[data-id="' + want + '"]');
+  const w = cv.offsetWidth;
+  let target;
+  if (el){
+    const x = w * parseFloat(el.style.left) / 100;
+    target = x - sc.clientWidth / 2;
+  } else {
+    target = overflow / 2;
+  }
+  sc.scrollLeft = Math.max(0, Math.min(overflow, target));
+}
+
+(async function boot(){
+  await Store.init();
+  Store.listeners.push(()=>{});
+  onRoute();
+  fitMap();
+  const img = document.getElementById('mtImg');
+  if (img && !img.complete) img.addEventListener('load', fitMap, {once:true});
+  window.addEventListener('resize', () => { if (location.hash === '') fitMap() });
+})();
+</script>
+</body>
+</html>
