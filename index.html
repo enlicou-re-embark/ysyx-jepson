@@ -201,6 +201,70 @@ h2 span{color:var(--tx);font-weight:600;letter-spacing:.3px;text-transform:none;
 .block .val{font-size:13.5px;line-height:1.65}
 .block .val.out{background:#0C2A38;border-left:2px solid var(--ac2);padding:9px 13px;border-radius:0 8px 8px 0}
 .block .val.stuck{color:var(--wn);font-size:12.5px}
+
+/* ---------- 交付区 ---------- */
+.att-cnt{float:right;font-size:10.5px;font-weight:600;color:var(--mu2);letter-spacing:0}
+.att-cnt.all{color:var(--ok)}
+.att-i{
+  border:1px dashed var(--bd2);border-radius:10px;
+  padding:10px 12px;margin-bottom:9px;background:rgba(255,255,255,.015);
+}
+.att-i.ok{border-style:solid;border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.05)}
+.att-top{display:flex;align-items:center;gap:7px}
+.att-top i{width:7px;height:7px;border-radius:50%;background:var(--mu2);flex:none}
+.att-i.ok .att-top i{background:var(--ok);box-shadow:0 0 8px rgba(52,211,153,.7)}
+.att-t{font-size:13px;line-height:1.5;flex:1;min-width:0}
+.att-ok{font-size:10px;color:var(--ok);letter-spacing:.5px;flex:none}
+.att-h{font-size:11px;color:var(--mu2);margin:4px 0 0 14px;line-height:1.5}
+.att-act{display:flex;gap:6px;margin-top:9px;padding-left:14px;flex-wrap:wrap}
+.att-act button{
+  font:inherit;font-size:11.5px;color:var(--ac2);
+  background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.22);
+  border-radius:7px;padding:5px 10px;cursor:pointer;
+}
+.att-act button:hover{background:rgba(34,211,238,.16)}
+.att-have{display:flex;align-items:center;gap:8px;margin-top:8px;padding-left:14px;font-size:11.5px;color:var(--mu)}
+.att-have .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx)}
+.att-have .sz{flex:none;font-size:10.5px;color:var(--mu2)}
+.att-have a.fn{color:var(--ac2);text-decoration:underline}
+.att-tx{display:block;line-height:1.55;color:var(--mu);white-space:pre-wrap}
+.att-x{
+  flex:none;font:inherit;font-size:10.5px;color:var(--mu2);
+  background:none;border:1px solid var(--bd2);border-radius:5px;
+  padding:2px 7px;cursor:pointer;
+}
+.att-x:hover{color:#F87171;border-color:rgba(248,113,113,.4)}
+.att-thumb{margin:8px 0 0 14px}
+.att-thumb img{max-width:100%;max-height:220px;border-radius:8px;display:block;border:1px solid var(--bd)}
+.att-empty{font-size:12px;color:var(--mu2);line-height:1.6;padding:2px 0 4px}
+.att-free{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.att-free button{
+  font:inherit;font-size:11.5px;color:var(--mu);
+  background:transparent;border:1px dashed var(--bd2);
+  border-radius:7px;padding:6px 11px;cursor:pointer;
+}
+.att-free button:hover{color:var(--ac2);border-color:var(--ac2)}
+
+/* 二级输入层：贴链接 / 写一段 */
+.attbox{
+  position:fixed;inset:0;z-index:60;background:rgba(4,8,16,.78);
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+.attbox.on{display:flex}
+.attbox-in{width:100%;max-width:440px;background:var(--sf);border:1px solid var(--bd2);border-radius:14px;padding:18px}
+.attbox-in h4{font-size:14px;font-weight:600;margin-bottom:12px}
+.attbox-in input,.attbox-in textarea{
+  width:100%;font:inherit;font-size:13px;color:var(--tx);
+  background:var(--sf2);border:1px solid var(--bd2);border-radius:9px;
+  padding:10px 12px;outline:none;resize:vertical;
+}
+.attbox-in input:focus,.attbox-in textarea:focus{border-color:var(--ac2)}
+.attbox-act{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.attbox-act button{
+  font:inherit;font-size:12.5px;padding:8px 16px;border-radius:8px;cursor:pointer;
+  background:var(--sf2);border:1px solid var(--bd2);color:var(--mu);
+}
+.attbox-act button.main{background:var(--ac2);border-color:var(--ac2);color:#04121A;font-weight:600}
 textarea{
   width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:10px;
   color:var(--tx);padding:10px 12px;font-size:13px;font-family:inherit;
@@ -307,13 +371,14 @@ footer{border-top:1px solid var(--bd);margin-top:34px;padding:18px 0 30px;displa
   <footer>
     <button class="btn-ghost" onclick="exportJSON()">备份到文件</button>
     <button class="btn-ghost" onclick="document.getElementById('imp').click()">从文件恢复</button>
+    <button class="btn-ghost" onclick="exportReport()">导出进度报告</button>
     <button class="btn-ghost" onclick="copyShare()">复制一句话发群里</button>
     <button class="btn-ghost" style="margin-left:auto" onclick="resetAll()">清空</button>
     <input type="file" id="imp" accept=".json" style="display:none" onchange="importJSON(this)">
   </footer>
   <div class="hint">
-    进度存在这台设备的浏览器里，换设备不会自动同步——要换设备就先用「备份到文件」导出，再在新设备上「从文件恢复」。<br>
-    截图不要存在这里。自己在电脑上建个文件夹，按编号命名，比如 F3-04.png。一年后能拿出来的，是那个文件夹。
+    进度和你交的图，都存在这台设备的浏览器里，换设备不会自动同步。要换设备，先用「备份到文件」导出，再到新设备「从文件恢复」。<br>
+    浏览器里的东西可能因为清缓存丢掉。真正要紧的，自己在电脑上再留一份，按编号命名，比如 F3-04.png。
   </div>
 </div>
 
@@ -325,6 +390,19 @@ footer{border-top:1px solid var(--bd);margin-top:34px;padding:18px 0 30px;displa
 <div id="modal" onclick="if(event.target===this)closeSheet()">
   <div class="sheet" id="sheet"></div>
 </div>
+
+<div id="attBox" class="attbox" onclick="if(event.target===this)closeAttBox()">
+  <div class="attbox-in">
+    <h4 id="attBoxTitle"></h4>
+    <div id="attBoxBody"></div>
+    <div class="attbox-act">
+      <button onclick="closeAttBox()">取消</button>
+      <button class="main" onclick="saveAttBox()">存下</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="attFile" style="display:none" accept="image/*,video/*,.pdf,.txt,.md,.doc,.docx,.zip,.rar">
 
 <div class="toast" id="toast"></div>
 
@@ -344,8 +422,55 @@ footer{border-top:1px solid var(--bd);margin-top:34px;padding:18px 0 30px;displa
    将来：把 Store.init / Store.persist 换成 Supabase 调用即可，
         所有 UI 都已经是 await 调用，调用点不用改。
    ============================================================ */
-const SCHEMA = 1;
+const SCHEMA = 2;
 const KEY = 'ysyx_progress_v1';
+
+/* ------------------------------------------------------------
+   文件层：图片/文档本体放 IndexedDB，元信息放 localStorage
+   localStorage 只有 5MB，塞不下图片，所以拆开存。
+   ------------------------------------------------------------ */
+const Files = {
+  db: null,
+  open(){
+    if (this.db) return Promise.resolve(this.db);
+    return new Promise((res, rej) => {
+      const req = indexedDB.open('ysyx_files', 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs');
+      };
+      req.onsuccess = e => { this.db = e.target.result; res(this.db) };
+      req.onerror = () => rej(req.error);
+    });
+  },
+  async put(id, blob){
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('blobs', 'readwrite');
+      tx.objectStore('blobs').put(blob, id);
+      tx.oncomplete = () => res(true);
+      tx.onerror = () => rej(tx.error);
+    });
+  },
+  async get(id){
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('blobs', 'readonly');
+      const r = tx.objectStore('blobs').get(id);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => rej(r.error);
+    });
+  },
+  async del(id){
+    const db = await this.open();
+    return new Promise((res, rej) => {
+      const tx = db.transaction('blobs', 'readwrite');
+      tx.objectStore('blobs').delete(id);
+      tx.oncomplete = () => res(true);
+      tx.onerror = () => rej(tx.error);
+    });
+  }
+};
 
 const Store = {
   backend: 'local',          // 'local' | 'cloud'，将来切云时改这里
@@ -359,7 +484,16 @@ const Store = {
     try {
       const raw = localStorage.getItem(KEY);
       const parsed = raw ? JSON.parse(raw) : null;
-      this.data = (parsed && parsed.schema === SCHEMA) ? parsed.cells : {};
+      if (!parsed) { this.data = {}; return }
+      /* 迁移：v1 只有 done/note/at，v2 多一个 atts。
+         这里不做 schema 严格比对，老数据一律接进来，缺的字段补默认值。 */
+      const cells = parsed.cells || {};
+      this.data = {};
+      for (const k in cells){
+        const v = cells[k];
+        if (!v) continue;
+        this.data[k] = { done: !!v.done, note: v.note || '', at: v.at || '', atts: v.atts || {} };
+      }
     } catch(e) { this.data = {}; }
   },
 
@@ -376,23 +510,71 @@ const Store = {
   get(id){ return this.data[id] || null },
   isDone(id){ return !!this.data[id]?.done },
   note(id){ return this.data[id]?.note || '' },
+  atts(id){ return this.data[id]?.atts || {} },
+  att(id, itemId){ return this.data[id]?.atts?.[itemId] || null },
+
+  rec(id){
+    if (!this.data[id]) this.data[id] = { done:false, note:'', at:'', atts:{} };
+    const r = this.data[id];
+    if (!r.atts) r.atts = {};
+    if (r.note === undefined) r.note = '';
+    return r;
+  },
 
   async setDone(id, done, note){
-    if (done){
-      this.data[id] = { done:true, note: note ?? this.note(id), at: this.data[id]?.at || today() };
-    } else {
-      delete this.data[id];
-    }
-    await this.persist();
+    const r = this.rec(id);
+    r.done = !!done;
+    if (note !== undefined) r.note = note;
+    if (done && !r.at) r.at = today();
+    await this.persist();          // 注意：取消点亮只关灯，不删笔记和附件
   },
 
   async setNote(id, note){
-    if (!this.data[id]) return;
-    this.data[id].note = note;
+    const r = this.rec(id);
+    r.note = note;
+    await this.persist();
+  },
+
+  /* ---- 交付物：三种形态共用一套槽位 ---- */
+  async addFile(id, itemId, file){
+    const attId = 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    await Files.put(attId, file);
+    const r = this.rec(id);
+    const old = r.atts[itemId];
+    if (old && old.attId) { try { await Files.del(old.attId) } catch(e){} }
+    r.atts[itemId] = { attId, kind:'file', name:file.name, mime:file.type || '', size:file.size, at:today() };
+    await this.persist();
+    return r.atts[itemId];
+  },
+
+  async addLink(id, itemId, url){
+    const r = this.rec(id);
+    r.atts[itemId] = { attId:null, kind:'link', url, name:url, at:today() };
+    await this.persist();
+  },
+
+  async addText(id, itemId, text){
+    const r = this.rec(id);
+    r.atts[itemId] = { attId:null, kind:'text', text, name:'', at:today() };
+    await this.persist();
+  },
+
+  async delAtt(id, itemId){
+    const r = this.data[id];
+    if (!r || !r.atts || !r.atts[itemId]) return;
+    const a = r.atts[itemId];
+    if (a.attId) { try { await Files.del(a.attId) } catch(e){} }
+    delete r.atts[itemId];
     await this.persist();
   },
 
   dump(){ return { schema: SCHEMA, updatedAt: new Date().toISOString(), cells: this.data } },
+
+  async clearAll(){
+    this.data = {};
+    try { localStorage.removeItem(KEY); } catch(e){}
+    this.listeners.forEach(fn => fn());
+  },
 
   async load(obj){
     if (!obj || typeof obj !== 'object') throw new Error('bad file');
@@ -400,7 +582,10 @@ const Store = {
     this.data = {};
     for (const k in cells){
       const v = cells[k];
-      if (v && (v.done || v.note)) this.data[k] = { done: !!v.done, note: v.note || '', at: v.at || '' };
+      if (!v) continue;
+      if (v.done || v.note || (v.atts && Object.keys(v.atts).length)){
+        this.data[k] = { done: !!v.done, note: v.note || '', at: v.at || '', atts: v.atts || {} };
+      }
     }
     await this.persist();
   }
@@ -409,30 +594,66 @@ const Store = {
 /* ============================================================
    课程内容
    ============================================================ */
+/* k = 这一条交什么：file 传文件 / link 贴链接 / text 写一段
+   h = 验收提示，告诉他自己看一眼够不够 */
 const F_CELLS = [
-  {id:'F2-01', t:'装上 Logisim，打开看一眼', d:'目标不是学会用，是让它能打开', out:'一张软件主界面的截图', type:'截图', min:40, stuck:'双击没反应，多半是缺 Java。先装 JDK，或者找自带 Java 的版本。这一步卡住的人最多，不是你笨。'},
-  {id:'F2-02', t:'点亮一个灯', d:'拖一个输入、一个输出，连一根线', out:'灯亮的截图或 3 秒录屏', type:'截图', min:30, stuck:'找不到元件就点左侧的文件夹图标，里面按类别分好了。'},
-  {id:'F2-03', t:'加一个开关：按一下亮，再按一下灭', d:'这一步开始有点「记住状态」的意思了', out:'15 秒录屏，按两下给他看', type:'截图', min:45, stuck:'做不出先跳过，去 F3 看完锁存器再回来，那时候一眼就懂。'},
-  {id:'F1-01', t:'读完两篇讲提问的文章', d:'讲义里指定的两篇，讲怎么问别人才愿意答', out:'一句话：你以前问过的最糟糕的问题是什么，为什么没人回', type:'文字', min:40, stuck:'读不下去就只读标题和小标题，知道有这回事就行，不用逐字。'},
-  {id:'F1-02', t:'写一篇不少于 800 字的读后感', d:'就着上面两篇写，写你自己踩过的坑最省力', out:'一篇 800 字以上的文字', type:'文字', min:90, stuck:'写之前先列三行提纲：我以前的问法 / 别人为什么不回 / 我以后怎么改。凑够三层就有 800 字。'},
-  {id:'F1-03', t:'通识问卷做到 100 分', d:'入学答辩的硬门槛，很多人到最后才发现', out:'一张 100 分的截图', type:'截图', min:30, stuck:'可以无限重做。第一次故意做错，把错题抄下来，第二次就过了。'},
-  {id:'F3-01', t:'从晶体管看懂几种门', d:'与非门、或非门、或门、异或门，讲义让你分析它们的结构', out:'手画的或门晶体管结构照片', type:'照片', min:90, stuck:'不用背，只要明白一件事：门电路是晶体管拼出来的，不是天上掉的。'},
-  {id:'F3-02', t:'在 Logisim 搭异或门、同或门', d:'用基本门拼出来，搭完仿真检查', out:'电路截图 + 你用了几个晶体管', type:'截图', min:60, stuck:'同或门最优解只要 6 个晶体管，搭不出来就用多几个，先跑通再说。'},
-  {id:'F3-03', t:'搭 2-4 译码器，再扩成 3-8', d:'讲义要求必须用门电路搭，不许用现成元件', out:'电路截图，输入变化时输出跟着变', type:'截图', min:90, stuck:'先画真值表再连线。四个输出的规律是「哪一位是 1」，看着真值表连就不会乱。'},
-  {id:'F3-04', t:'搭七段数码管译码器', d:'先做十进制 0-9，再做十六进制 A-F', out:'数码管按输入显示数字的录屏', type:'截图', min:150, stuck:'先做一位（a 段），做通了剩下六位是重复劳动。这一格是全 F3 最花时间的，留整块时间。'},
-  {id:'F3-05', t:'搭 16-4 编码器、4-2 优先编码器', d:'编码器是译码器反过来', out:'电路截图，输入独热码显示对应数字', type:'截图', min:90, stuck:'优先编码器可以不管「非独热码」的情况，讲义明确说未定义就是随便取值。'},
-  {id:'F3-06', t:'搭 2 选 1、4 选 1 选择器', d:'处理器里用得最多的元件', out:'电路截图', type:'截图', min:60, stuck:'选择器 = 译码器 + 一堆与门 + 一个或门，看讲义那张电路图照抄结构。'},
-  {id:'F3-07', t:'做一个能切换十/十六进制的数码管', d:'5 个拨码开关，1 个管进制，4 个管数据', out:'切换时显示变化的录屏', type:'截图', min:75, stuck:'把 F3-04 和 F3-06 拼起来就行，这格是复习不是新知识。'},
-  {id:'F3-08', t:'搭 4 位比较器', d:'两组拨码开关比较，相等就亮灯', out:'截图：相等时灯亮，不等时灯灭', type:'截图', min:45, stuck:'用同或门逐位比，再全部与起来。'},
-  {id:'F3-09', t:'搭加法器：半加 → 全加 → 4 位', d:'这一格开始，你的电路会「算数」了', out:'两张数相加、数码管显示结果的截图', type:'截图', min:120, stuck:'进位是从低位往高位传的，连的时候从左往右接，别接反。'},
-  {id:'F3-10', t:'搭减法器，再试原码和反码加法器', d:'讲义让你搭三种表示法的加法器，比较它们', out:'减法结果截图 + 溢出检测截图', type:'截图', min:120, stuck:'补码那块绕，先只做减法器，原码反码看懂思路就行。'},
-  {id:'F3-11', t:'搭 SR 锁存器和 D 锁存器', d:'从这里开始，电路会「记住」东西', out:'截图，加上你触发振荡时的报错', type:'截图', min:90, stuck:'讲义专门让你触发一次亚稳态（屏幕上报 Oscillation apparent），看到那个报错是正常的，是任务的一部分。'},
-  {id:'F3-12', t:'搭 D 触发器，再拼成 4 位寄存器', d:'触发器是芯片里所有存储的起点', out:'写入数据、数码管显示的截图', type:'截图', min:120, stuck:'时钟接按钮，按一下走一步。看不懂主从结构就先照讲义图连，跑通了再回头看原理。'},
-  {id:'F3-13', t:'设计数列求和电路 1+2+…+10', d:'讲义里唯一一个「像处理器」的东西', out:'算出 55 的截图', type:'截图', min:90, stuck:'寄存器存和，加法器算，时钟推一步加一次。做完这格，F4 会轻松很多。'},
-  {id:'F4-01', t:'手工执行一遍数列求和程序', d:'讲义给了三条指令，你扮演 CPU，一格一格推', out:'手写的寄存器变化表照片', type:'照片', min:60, stuck:'画个表：每一步写指令、寄存器值、下一步跳哪。推三行就顺手了。'},
-  {id:'F4-02', t:'用三条指令写 1+3+5+7+9', d:'只有 add / li / bne，写出来你会很爽', out:'纸上的程序 + 状态表', type:'照片', min:60, stuck:'写不出来就照 F4-01 的求和思路改：把加 1 改成加 2。'},
-  {id:'F4-03', t:'在 godbolt 上跑一段 C 程序', d:'浏览器里直接跑，不用装环境', out:'终端输出 z = 3 的截图', type:'截图', min:30, stuck:'进去点 Add new，选 Execution Only，不然看不到输出。'},
-  {id:'F4-04', t:'用状态机的眼光看回你的求和电路', d:'F3-13 那个电路，其实就是个状态机', out:'手写的电路状态变化表', type:'照片', min:60, stuck:'把「时钟推一步」当成「执行一条指令」，两边的表应该长得一样。'}
+  {id:'F2-01', t:'装上 Logisim，打开看一眼', d:'目标不是学会用，是让它能打开', out:'一张软件主界面的截图', type:'截图', min:40, stuck:'双击没反应，多半是缺 Java。先装 JDK，或者找自带 Java 的版本。这一步卡住的人最多，不是你笨。',
+   items:[{k:'file', t:'Logisim 主界面截图', h:'要能看到菜单栏，证明软件真的开了'}]},
+  {id:'F2-02', t:'点亮一个灯', d:'拖一个输入、一个输出，连一根线', out:'灯亮的截图或 3 秒录屏', type:'截图', min:30, stuck:'找不到元件就点左侧的文件夹图标，里面按类别分好了。',
+   items:[{k:'file', t:'灯亮时的电路截图', h:'截到那个灯在亮的瞬间'}]},
+  {id:'F2-03', t:'加一个开关：按一下亮，再按一下灭', d:'这一步开始有点「记住状态」的意思了', out:'15 秒录屏，按两下给他看', type:'截图', min:45, stuck:'做不出先跳过，去 F3 看完锁存器再回来，那时候一眼就懂。',
+   items:[{k:'file', t:'按两下开关的录屏，15 秒左右', h:'亮一次、灭一次，能看出来状态被记住了'}]},
+  {id:'F1-01', t:'读完两篇讲提问的文章', d:'讲义里指定的两篇，讲怎么问别人才愿意答', out:'一句话：你以前问过的最糟糕的问题是什么，为什么没人回', type:'文字', min:40, stuck:'读不下去就只读标题和小标题，知道有这回事就行，不用逐字。',
+   items:[{k:'text', t:'回答：你问过最糟糕的一个问题是什么，为什么没人回', h:'两句就够，不用展开'}]},
+  {id:'F1-02', t:'写一篇不少于 800 字的读后感', d:'就着上面两篇写，写你自己踩过的坑最省力', out:'一篇 800 字以上的文字', type:'文字', min:90, stuck:'写之前先列三行提纲：我以前的问法 / 别人为什么不回 / 我以后怎么改。凑够三层就有 800 字。',
+   items:[{k:'file', t:'读后感文档（.md / .docx / .txt）', h:'800 字以上，存成文件传上来'}]},
+  {id:'F1-03', t:'通识问卷做到 100 分', d:'入学答辩的硬门槛，很多人到最后才发现', out:'一张 100 分的截图', type:'截图', min:30, stuck:'可以无限重做。第一次故意做错，把错题抄下来，第二次就过了。',
+   items:[{k:'file', t:'满分截图', h:'要能看见分数是 100，不是 90 多'}]},
+  {id:'F3-01', t:'从晶体管看懂几种门', d:'与非门、或非门、或门、异或门，讲义让你分析它们的结构', out:'手画的或门晶体管结构照片', type:'照片', min:90, stuck:'不用背，只要明白一件事：门电路是晶体管拼出来的，不是天上掉的。',
+   items:[{k:'file', t:'手画的或门结构照片', h:'拍照就行，草稿也算'}]},
+  {id:'F3-02', t:'在 Logisim 搭异或门、同或门', d:'用基本门拼出来，搭完仿真检查', out:'电路截图 + 你用了几个晶体管', type:'截图', min:60, stuck:'同或门最优解只要 6 个晶体管，搭不出来就用多几个，先跑通再说。',
+   items:[{k:'file', t:'异或门和同或门的电路截图', h:'仿真能跑通再截'},
+          {k:'text', t:'写了几个晶体管：异或门 __ 个，同或门 __ 个', h:'填个数就行'}]},
+  {id:'F3-03', t:'搭 2-4 译码器，再扩成 3-8', d:'讲义要求必须用门电路搭，不许用现成元件', out:'电路截图，输入变化时输出跟着变', type:'截图', min:90, stuck:'先画真值表再连线。四个输出的规律是「哪一位是 1」，看着真值表连就不会乱。',
+   items:[{k:'file', t:'2-4 译码器截图', h:'输入变化时输出跟着变'},
+          {k:'file', t:'扩成 3-8 之后的截图', h:'能看出是两级级联出来的'}]},
+  {id:'F3-04', t:'搭七段数码管译码器', d:'先做十进制 0-9，再做十六进制 A-F', out:'数码管按输入显示数字的录屏', type:'截图', min:150, stuck:'先做一位（a 段），做通了剩下六位是重复劳动。这一格是全 F3 最花时间的，留整块时间。',
+   items:[{k:'file', t:'十进制 0-9 显示截图', h:'至少截到两个不同的数字'},
+          {k:'file', t:'十六进制 A-F 显示截图', h:'字母几位要能认出来'}]},
+  {id:'F3-05', t:'搭 16-4 编码器、4-2 优先编码器', d:'编码器是译码器反过来', out:'电路截图，输入独热码显示对应数字', type:'截图', min:90, stuck:'优先编码器可以不管「非独热码」的情况，讲义明确说未定义就是随便取值。',
+   items:[{k:'file', t:'16-4 编码器截图', h:'输入独热码，输出对应编号'},
+          {k:'file', t:'4-2 优先编码器截图', h:'两个输入同时为 1 时，看谁优先'}]},
+  {id:'F3-06', t:'搭 2 选 1、4 选 1 选择器', d:'处理器里用得最多的元件', out:'电路截图', type:'截图', min:60, stuck:'选择器 = 译码器 + 一堆与门 + 一个或门，看讲义那张电路图照抄结构。',
+   items:[{k:'file', t:'2 选 1 和 4 选 1 的电路截图', h:'一张图能同时看到两个更好'}]},
+  {id:'F3-07', t:'做一个能切换十/十六进制的数码管', d:'5 个拨码开关，1 个管进制，4 个管数据', out:'切换时显示变化的录屏', type:'截图', min:75, stuck:'把 F3-04 和 F3-06 拼起来就行，这格是复习不是新知识。',
+   items:[{k:'file', t:'切换进制的截图或短录屏', h:'同一个数，两种进制各一张'}]},
+  {id:'F3-08', t:'搭 4 位比较器', d:'两组拨码开关比较，相等就亮灯', out:'截图：相等时灯亮，不等时灯灭', type:'截图', min:45, stuck:'用同或门逐位比，再全部与起来。',
+   items:[{k:'file', t:'相等时灯亮的截图', h:''},
+          {k:'file', t:'不等时灯灭的截图', h:'两张对比着看才有说服力'}]},
+  {id:'F3-09', t:'搭加法器：半加 → 全加 → 4 位', d:'这一格开始，你的电路会「算数」了', out:'两张数相加、数码管显示结果的截图', type:'截图', min:120, stuck:'进位是从低位往高位传的，连的时候从左往右接，别接反。',
+   items:[{k:'file', t:'半加器截图', h:''},
+          {k:'file', t:'全加器截图', h:'带进位输入的那根线要接对'},
+          {k:'file', t:'4 位加法器算出结果的截图', h:'两个数加完，数码管显示正确'}]},
+  {id:'F3-10', t:'搭减法器，再试原码和反码加法器', d:'讲义让你搭三种表示法的加法器，比较它们', out:'减法结果截图 + 溢出检测截图', type:'截图', min:120, stuck:'补码那块绕，先只做减法器，原码反码看懂思路就行。',
+   items:[{k:'file', t:'减法器结果截图', h:'要能看出是减出来的'},
+          {k:'file', t:'溢出检测截图', h:'借位或溢出那根线亮了'}]},
+  {id:'F3-11', t:'搭 SR 锁存器和 D 锁存器', d:'从这里开始，电路会「记住」东西', out:'截图，加上你触发振荡时的报错', type:'截图', min:90, stuck:'讲义专门让你触发一次亚稳态（屏幕上报 Oscillation apparent），看到那个报错是正常的，是任务的一部分。',
+   items:[{k:'file', t:'SR 锁存器和 D 锁存器截图', h:''},
+          {k:'file', t:'触发振荡的报错截图', h:'屏幕上出现 Oscillation apparent 那一行'}]},
+  {id:'F3-12', t:'搭 D 触发器，再拼成 4 位寄存器', d:'触发器是芯片里所有存储的起点', out:'写入数据、数码管显示的截图', type:'截图', min:120, stuck:'时钟接按钮，按一下走一步。看不懂主从结构就先照讲义图连，跑通了再回头看原理。',
+   items:[{k:'file', t:'D 触发器截图', h:'时钟接按钮，按一下走一步'},
+          {k:'file', t:'4 位寄存器写数显示的截图', h:'写进去的数能读出来'}]},
+  {id:'F3-13', t:'设计数列求和电路 1+2+…+10', d:'讲义里唯一一个「像处理器」的东西', out:'算出 55 的截图', type:'截图', min:90, stuck:'寄存器存和，加法器算，时钟推一步加一次。做完这格，F4 会轻松很多。',
+   items:[{k:'file', t:'算出 55 的截图', h:'数码管上是 55，不是 54 或 56'}]},
+  {id:'F4-01', t:'手工执行一遍数列求和程序', d:'讲义给了三条指令，你扮演 CPU，一格一格推', out:'手写的寄存器变化表照片', type:'照片', min:60, stuck:'画个表：每一步写指令、寄存器值、下一步跳哪。推三行就顺手了。',
+   items:[{k:'file', t:'寄存器变化表照片', h:'表头要有：步数 / 指令 / 寄存器值'}]},
+  {id:'F4-02', t:'用三条指令写 1+3+5+7+9', d:'只有 add / li / bne，写出来你会很爽', out:'纸上的程序 + 状态表', type:'照片', min:60, stuck:'写不出来就照 F4-01 的求和思路改：把加 1 改成加 2。',
+   items:[{k:'file', t:'程序照片', h:'只有 add / li / bne 三条指令'},
+          {k:'file', t:'状态表照片', h:'最后结果应该是 25'}]},
+  {id:'F4-03', t:'在 godbolt 上跑一段 C 程序', d:'浏览器里直接跑，不用装环境', out:'终端输出 z = 3 的截图', type:'截图', min:30, stuck:'进去点 Add new，选 Execution Only，不然看不到输出。',
+   items:[{k:'file', t:'z = 3 的输出截图', h:'能看见汇编和输出两块'}]},
+  {id:'F4-04', t:'用状态机的眼光看回你的求和电路', d:'F3-13 那个电路，其实就是个状态机', out:'手写的电路状态变化表', type:'照片', min:60, stuck:'把「时钟推一步」当成「执行一条指令」，两边的表应该长得一样。',
+   items:[{k:'file', t:'状态变化表照片', h:'和 F4-01 的表对比着看，结构应该很像'}]}
 ];
 
 const STAGES = [
@@ -517,6 +738,12 @@ const STAGES = [
     ]
   }
 ];
+
+/* 给每条必交项一个稳定 id：格子号 + 字母，例如 F2-02-a。
+   附件就按这个 id 存，改文案不会把已交的东西弄丢。 */
+STAGES.forEach(s => (s.cells || []).forEach(c => {
+  if (c.items) c.items.forEach((it, i) => { if (!it.id) it.id = c.id + '-' + 'abcdefghij'[i]; });
+}));
 
 const ALL = STAGES.flatMap(s => s.cells);
 
@@ -750,6 +977,9 @@ window.addEventListener('hashchange', onRoute);
    弹层
    ============================================================ */
 let sheetId = null;
+let attTarget = null;     // {cellId, itemId} 等着接收文件
+let attBoxState = null;   // {cellId, itemId, mode} 等着收链接或文字
+
 function openSheet(id){
   const c = ALL.find(x => x.id === id);
   if (!c) return;
@@ -759,6 +989,32 @@ function openSheet(id){
   const done = Store.isDone(id);
   const nt = Store.note(id);
   const rec = Store.data[id];
+  const items = c.items || [];
+
+  let attBlock;
+  if (items.length){
+    const filled = items.filter(it => Store.att(id, it.id)).length;
+    const allIn = filled === items.length;
+    attBlock =
+      '<div class="block atts"><div class="lb">要交的东西' +
+        '<b class="att-cnt' + (allIn ? ' all' : '') + '">' + filled + ' / ' + items.length + '</b></div>' +
+      items.map(it => attItemHtml(id, it)).join('') +
+      '</div>';
+  } else {
+    const keys = Object.keys(Store.atts(id));
+    attBlock =
+      '<div class="block atts"><div class="lb">产出物' +
+        (keys.length ? '<b class="att-cnt">' + keys.length + '</b>' : '') + '</div>' +
+      (keys.length
+        ? keys.map(k => attItemHtml(id, { id:k, free:true })).join('')
+        : '<div class="att-empty">做完会留下点什么？截图、录屏、文档、代码链接都行。留一份，三个月后回来看还能想起来。</div>') +
+      '<div class="att-free">' +
+        '<button onclick="freeAdd(\'' + id + '\',\'file\')">＋ 传文件</button>' +
+        '<button onclick="freeAdd(\'' + id + '\',\'link\')">＋ 贴链接</button>' +
+        '<button onclick="freeAdd(\'' + id + '\',\'text\')">＋ 写一段</button>' +
+      '</div></div>';
+  }
+
   document.getElementById('sheet').innerHTML =
     '<div class="grab"></div>' +
     '<div class="sheet-hd"><h3>' + esc(c.t) + '</h3>' +
@@ -768,6 +1024,7 @@ function openSheet(id){
     '<div class="block"><div class="lb">交什么才算过</div><div class="val out">' + esc(c.out) + '</div></div>' +
     '<div class="block"><div class="lb">大概要多久</div><div class="val">' + (c.min ? '约 ' + c.min + ' 分钟' : '待定') + '</div></div>' +
     '<div class="block"><div class="lb">卡住了怎么过</div><div class="val stuck">' + esc(c.stuck) + '</div></div>' +
+    attBlock +
     '<div class="block"><div class="lb">留一句给自己（可选）</div>' +
     '<textarea id="note" placeholder="哪一步最费劲、下次怎么绕过、想吐槽什么">' + esc(nt) + '</textarea></div>' +
     (done
@@ -776,17 +1033,152 @@ function openSheet(id){
       : '<button class="btn btn-main" onclick="toggleDone(\'' + id + '\', false)">点亮这一格</button>');
   document.getElementById('modal').classList.add('on');
   document.body.style.overflow = 'hidden';
+  paintThumbs(id);
 }
+
 function closeSheet(){
   document.getElementById('modal').classList.remove('on');
   document.body.style.overflow = '';
   sheetId = null;
+}
+
+/* ---------- 交付区渲染 ---------- */
+function attItemHtml(cellId, it){
+  const a = Store.att(cellId, it.id);
+  const label = it.t || (a && a.name) || '产出物';
+  let acts = '', body = '';
+
+  if (a){
+    if (a.kind === 'file'){
+      const isImg = (a.mime || '').indexOf('image/') === 0;
+      body =
+        (isImg ? '<div class="att-thumb" id="th_' + it.id + '">载入中…</div>' : '') +
+        '<div class="att-have"><span class="fn">' + esc(a.name) + '</span>' +
+        '<span class="sz">' + fmtSize(a.size) + '</span>' +
+        '<button class="att-x" onclick="delAtt(\'' + cellId + '\',\'' + it.id + '\')">删</button></div>';
+    } else if (a.kind === 'link'){
+      body = '<div class="att-have"><a class="fn" href="' + esc(a.url) + '" target="_blank" rel="noopener">' +
+        esc(a.url) + '</a>' +
+        '<button class="att-x" onclick="delAtt(\'' + cellId + '\',\'' + it.id + '\')">删</button></div>';
+    } else {
+      const tx = a.text || '';
+      body = '<div class="att-have att-tx">' + esc(tx.slice(0, 140)) + (tx.length > 140 ? '…' : '') +
+        '<button class="att-x" onclick="delAtt(\'' + cellId + '\',\'' + it.id + '\')">删</button></div>';
+    }
+  } else {
+    acts = '<div class="att-act">' +
+      '<button onclick="pickFor(\'' + cellId + '\',\'' + it.id + '\')">上传文件</button>' +
+      '<button onclick="openAttBox(\'' + cellId + '\',\'' + it.id + '\',\'link\')">贴链接</button>' +
+      '<button onclick="openAttBox(\'' + cellId + '\',\'' + it.id + '\',\'text\')">写一段</button>' +
+      '</div>';
+  }
+
+  return '<div class="att-i' + (a ? ' ok' : '') + '">' +
+    '<div class="att-top"><i></i><span class="att-t">' + esc(label) + '</span>' +
+    (a ? '<span class="att-ok">已交</span>' : '') + '</div>' +
+    (it.h ? '<div class="att-h">' + esc(it.h) + '</div>' : '') +
+    acts + body + '</div>';
+}
+
+async function paintThumbs(cellId){
+  const atts = Store.atts(cellId);
+  for (const itemId in atts){
+    const a = atts[itemId];
+    if (!a.attId || (a.mime || '').indexOf('image/') !== 0) continue;
+    const box = document.getElementById('th_' + itemId);
+    if (!box || box.dataset.on) continue;
+    box.dataset.on = '1';
+    try {
+      const blob = await Files.get(a.attId);
+      if (!blob) { box.textContent = '图片找不到了'; continue }
+      const url = URL.createObjectURL(blob);
+      box.innerHTML = '<img src="' + url + '" alt="">';
+    } catch(e){ box.textContent = '图片读不出来' }
+  }
+}
+
+/* 重渲染前先把正在写的那句笔记存住，不然会被冲掉 */
+function saveNoteNow(){
+  const el = document.getElementById('note');
+  if (el && sheetId) Store.setNote(sheetId, el.value);
+}
+
+function fmtSize(n){
+  if (n === undefined || n === null) return '';
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return Math.round(n / 1024) + ' KB';
+  return (n / 1048576).toFixed(1) + ' MB';
+}
+
+/* ---------- 交东西 ---------- */
+function pickFor(cellId, itemId){
+  saveNoteNow();
+  attTarget = { cellId, itemId };
+  const inp = document.getElementById('attFile');
+  inp.value = '';
+  inp.click();
+}
+
+function freeAdd(cellId, mode){
+  const r = Store.rec(cellId);
+  let n = 1;
+  while (r.atts['_f' + n]) n++;
+  const itemId = '_f' + n;
+  if (mode === 'file') pickFor(cellId, itemId);
+  else openAttBox(cellId, itemId, mode);
+}
+
+function openAttBox(cellId, itemId, mode){
+  saveNoteNow();
+  attBoxState = { cellId, itemId, mode };
+  document.getElementById('attBoxTitle').textContent = mode === 'link' ? '贴个链接' : '写一段';
+  document.getElementById('attBoxBody').innerHTML = mode === 'link'
+    ? '<input type="url" id="attInput" placeholder="https://…" inputmode="url">'
+    : '<textarea id="attInput" rows="6" placeholder="直接写，不用讲究措辞"></textarea>';
+  document.getElementById('attBox').classList.add('on');
+  setTimeout(() => document.getElementById('attInput')?.focus(), 80);
+}
+
+function closeAttBox(){
+  document.getElementById('attBox').classList.remove('on');
+  attBoxState = null;
+}
+
+async function saveAttBox(){
+  if (!attBoxState) return;
+  const el = document.getElementById('attInput');
+  const v = (el && el.value ? el.value : '').trim();
+  const st = attBoxState;
+  if (!v){ toast('还没写东西'); return }
+  if (st.mode === 'link' && !/^https?:\/\//i.test(v)){ toast('链接要以 http:// 或 https:// 开头'); return }
+  if (st.mode === 'link') await Store.addLink(st.cellId, st.itemId, v);
+  else await Store.addText(st.cellId, st.itemId, v);
+  closeAttBox();
+  openSheet(st.cellId);
+  toast('已交');
+}
+
+async function delAtt(cellId, itemId){
+  saveNoteNow();
+  await Store.delAtt(cellId, itemId);
+  openSheet(cellId);
+  toast('已删除');
 }
 async function toggleDone(id, wasDone){
   const noteEl = document.getElementById('note');
   const note = noteEl ? noteEl.value.trim() : '';
   const st = stageOf(id);
   const before = st ? countDone(st.cells) : 0;
+
+  /* 必交项没交全也允许先点亮，但要说一声——不拦人，只提醒 */
+  if (!wasDone){
+    const c = ALL.find(x => x.id === id);
+    if (c && c.items && c.items.length){
+      const miss = c.items.filter(it => !Store.att(id, it.id)).length;
+      if (miss > 0 && !confirm('还有 ' + miss + ' 项没交。现在点亮也行，之后随时能回来补。要继续吗？')) return;
+    }
+  }
+
   await Store.setDone(id, !wasDone, note);
   closeSheet();
   onRoute();
@@ -804,8 +1196,46 @@ async function toggleDone(id, wasDone){
 /* ============================================================
    导入导出
    ============================================================ */
-function exportJSON(){
-  const blob = new Blob([JSON.stringify(Store.dump(), null, 2)], {type:'application/json'});
+function blobToDataURL(blob){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(fr.result);
+    fr.onerror = rej;
+    fr.readAsDataURL(blob);
+  });
+}
+
+function dataURLtoBlob(du){
+  const i = du.indexOf(',');
+  const head = du.slice(0, i), body = du.slice(i + 1);
+  const m = head.match(/:(.*?);/);
+  const mime = m ? m[1] : 'application/octet-stream';
+  const bin = atob(body);
+  const arr = new Uint8Array(bin.length);
+  for (let k = 0; k < bin.length; k++) arr[k] = bin.charCodeAt(k);
+  return new Blob([arr], { type: mime });
+}
+
+/* 备份：连图片本体一起打包，换设备能完整搬过去 */
+async function exportJSON(){
+  toast('正在打包…');
+  const payload = Store.dump();
+  const blobs = {};
+  let n = 0;
+  for (const cellId in payload.cells){
+    const atts = payload.cells[cellId].atts || {};
+    for (const itemId in atts){
+      const a = atts[itemId];
+      if (!a.attId) continue;
+      try {
+        const b = await Files.get(a.attId);
+        if (b){ blobs[a.attId] = await blobToDataURL(b); n++ }
+      } catch(e){}
+    }
+  }
+  payload.blobs = blobs;
+
+  const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
   const a = document.createElement('a');
   const d = new Date();
   const name = 'Jepson造芯进度_' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '.json';
@@ -813,21 +1243,135 @@ function exportJSON(){
   a.download = name;
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
-  toast('已导出：' + name);
+  toast('已导出：' + name + (n ? '（含 ' + n + ' 个文件）' : ''));
 }
 
 async function importJSON(input){
   const f = input.files[0];
   if (!f) return;
   try {
-    const txt = await f.text();
-    await Store.load(JSON.parse(txt));
+    const obj = JSON.parse(await f.text());
+    if (obj.blobs){
+      for (const id in obj.blobs){
+        try { await Files.put(id, dataURLtoBlob(obj.blobs[id])) } catch(e){}
+      }
+      delete obj.blobs;
+    }
+    await Store.load(obj);
     onRoute();
     toast('已恢复进度');
   } catch(e){
     toast('这个文件读不出来');
   }
   input.value = '';
+}
+
+/* ------------------------------------------------------------
+   导出进度报告：给家长/助教看的一份 HTML，图片全部内联，
+   双击就能打开，不用联网。样式先朴素，够看就行。
+   ------------------------------------------------------------ */
+const REPORT_CSS = `
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#fff;color:#1a1a1a;line-height:1.65;max-width:820px;margin:0 auto;padding:40px 22px 80px}
+header{border-bottom:2px solid #1a1a1a;padding-bottom:14px;margin-bottom:26px}
+header h1{font-size:22px;font-weight:700;letter-spacing:.5px}
+header .sub{font-size:12px;color:#666;margin-top:6px}
+h1.stage{font-size:15px;font-weight:700;color:#0a6b7a;margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid #d8e3e6}
+section{margin-bottom:24px}
+section h2{font-size:14.5px;font-weight:600;margin-bottom:3px}
+section .meta{font-size:11px;color:#888;margin-bottom:8px}
+figure{margin:10px 0}
+figure img{max-width:100%;border:1px solid #ddd;border-radius:6px;display:block}
+figcaption{font-size:11px;color:#666;margin-bottom:5px}
+blockquote{font-size:12.5px;background:#f6f8f9;border-left:3px solid #b8ccd2;padding:10px 13px;white-space:pre-wrap;border-radius:0 5px 5px 0}
+p.file{font-size:12.5px;color:#333;margin:7px 0}
+p.file span{color:#999;font-size:11px}
+p.miss{font-size:12px;color:#b45050;margin:6px 0}
+p.note{font-size:12px;color:#666;background:#fafafa;padding:8px 12px;border-radius:5px;margin-top:10px}
+p.empty{color:#888;text-align:center;padding:60px 0}
+@media print{body{padding:0}section{page-break-inside:avoid}}
+`;
+
+async function reportAttHtml(a, label){
+  const cap = label ? '<figcaption>' + esc(label) + '</figcaption>' : '';
+  if (a.kind === 'file'){
+    if (a.attId && (a.mime || '').indexOf('image/') === 0){
+      try {
+        const b = await Files.get(a.attId);
+        if (b){
+          const du = await blobToDataURL(b);
+          return '<figure>' + cap + '<img src="' + du + '" alt=""></figure>';
+        }
+      } catch(e){}
+    }
+    return '<p class="file">📎 ' + esc(a.name) + '　<span>' + fmtSize(a.size) + '</span></p>';
+  }
+  if (a.kind === 'link'){
+    return '<p class="file">🔗 <a href="' + esc(a.url) + '" target="_blank" rel="noopener">' + esc(a.url) + '</a></p>';
+  }
+  return '<figure>' + (label ? '<figcaption>' + esc(label) + '</figcaption>' : '') +
+    '<blockquote>' + esc(a.text || '') + '</blockquote></figure>';
+}
+
+async function buildReportHtml(){
+  const parts = [];
+  let files = 0;
+
+  for (const st of STAGES){
+    const rows = [];
+    for (const c of (st.cells || [])){
+      const rec = Store.data[c.id];
+      if (!rec) continue;
+      const atts = rec.atts || {};
+      const keys = Object.keys(atts);
+      if (!rec.done && !keys.length) continue;
+
+      const items = c.items || [];
+      let body = '';
+      for (const it of items){
+        const a = atts[it.id];
+        if (!a){ body += '<p class="miss">✗ 没交：' + esc(it.t) + '</p>'; continue }
+        body += await reportAttHtml(a, it.t);
+        if (a.kind === 'file') files++;
+      }
+      for (const k of keys){
+        if (items.some(it => it.id === k)) continue;
+        body += await reportAttHtml(atts[k], '');
+        if (atts[k].kind === 'file') files++;
+      }
+      if (rec.note) body += '<p class="note">' + esc(rec.note) + '</p>';
+
+      rows.push('<section><h2>' + esc(c.id + '　' + c.t) + '</h2>' +
+        '<p class="meta">' + (rec.done ? '已点亮 · ' + (rec.at || '') : '还没点亮') + '</p>' +
+        body + '</section>');
+    }
+    if (rows.length) parts.push('<h1 class="stage">' + esc(st.id + ' · ' + st.name) + '</h1>' + rows.join(''));
+  }
+
+  const total = countDone(ALL);
+  const html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Jepson 造芯进度 · ' + today() + '</title><style>' + REPORT_CSS + '</style></head><body>' +
+    '<header><h1>Jepson 的造芯进度</h1>' +
+    '<p class="sub">导出时间 ' + today() + ' · 已点亮 ' + total + ' / ' + ALL.length + ' 格 · 共 ' + files + ' 个文件</p></header>' +
+    (parts.length ? parts.join('') : '<p class="empty">还没有开始。第一格是 F2-01，装上 Logisim。</p>') +
+    '</body></html>';
+  return html;
+}
+
+async function exportReport(){
+  toast('正在生成，图多的话要等几秒…');
+  const html = await buildReportHtml();
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  const d = new Date();
+  const name = '造芯进度报告_' + d.getFullYear() + ('0'+(d.getMonth()+1)).slice(-2) + ('0'+d.getDate()).slice(-2) + '.html';
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  toast('报告已导出：' + name);
 }
 
 function copyShare(){
@@ -840,9 +1384,14 @@ function copyShare(){
 }
 
 async function resetAll(){
-  if (!confirm('清空所有进度？清完找不回来，建议先「备份到文件」。')) return;
-  Store.data = {};
-  await Store.persist();
+  if (!confirm('清空所有进度和已交的图？清完找不回来，建议先「备份到文件」。')) return;
+  for (const cellId in Store.data){
+    const atts = Store.data[cellId].atts || {};
+    for (const k in atts){
+      if (atts[k].attId){ try { await Files.del(atts[k].attId) } catch(e){} }
+    }
+  }
+  await Store.clearAll();
   onRoute();
   toast('已清空');
 }
@@ -873,6 +1422,26 @@ function fitMap(){
 }
 
 (async function boot(){
+  /* 选完文件就走这里：文件本体进 IndexedDB，元信息进进度数据 */
+  document.getElementById('attFile').addEventListener('change', async function(){
+    const f = this.files && this.files[0];
+    const t = attTarget;
+    attTarget = null;
+    if (!f || !t) return;
+    if (f.size > 12 * 1024 * 1024){
+      toast('这个文件 ' + fmtSize(f.size) + '，超过 12MB。录屏截短一点，或者存到电脑上贴个链接。');
+      return;
+    }
+    saveNoteNow();
+    try {
+      await Store.addFile(t.cellId, t.itemId, f);
+      openSheet(t.cellId);
+      toast('已交：' + f.name);
+    } catch(e){
+      toast('存不下，可能是浏览器空间满了');
+    }
+  });
+
   await Store.init();
   Store.listeners.push(()=>{});
   onRoute();
